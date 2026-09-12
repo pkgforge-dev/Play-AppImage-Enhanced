@@ -7,23 +7,32 @@ ARCH=$(uname -m)
 echo "Installing package dependencies..."
 echo "---------------------------------------------------------------"
 pacman -Syu --noconfirm \
-     kvantum       \
-     lxqt-qtplugin \
-     qt6ct
+     cmake              \
+     glew               \
+     hicolor-icon-theme \
+     kvantum            \
+     lxqt-qtplugin      \
+     nlohmann-json      \
+     openal             \
+     qt6-base           \
+     qt6ct              \
+     vulkan-icd-loader 
 
 echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
 get-debloated-pkgs --add-common --prefer-nano
 
-# Comment this out if you need an AUR package
-make-aur-package play-emu-git
+echo "Building Play!..."
+echo "---------------------------------------------------------------"
+REPO="https://github.com/jpd002/Play-.git"
+VERSION="$(git ls-remote "$REPO" HEAD | cut -c 1-9 | head -1)"
+git clone --recursive --depth 1 "$REPO" ./Play
+echo "$VERSION" > ~/version
 
-# If the application needs to be manually built that has to be done down here
 
-# if you also have to make nightly releases check for DEVEL_RELEASE = 1
-#
-# if [ "${DEVEL_RELEASE-}" = 1 ]; then
-# 	nightly build steps
-# else
-# 	regular build steps
-# fi
+cmake -B build -S ./Play \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DWITH_SYSTEM_ZLIB=ON
+cmake --build build
+cmake --install build
