@@ -13,7 +13,7 @@ export STARTUPWMCLASS=Play
 export DEPLOY_VULKAN=1
 
 # Deploy dependencies
-quick-sharun /usr/bin/Play
+quick-sharun /usr/bin/Play /usr/lib/libopenal.so*
 
 # Turn AppDir into AppImage
 quick-sharun --make-appimage
